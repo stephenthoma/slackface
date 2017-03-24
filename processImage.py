@@ -57,8 +57,9 @@ def _get_gc_mask(image):
                                          flags=cv2.CASCADE_SCALE_IMAGE)
 
     rect[:, 2:] += rect[:, :2]
-    for x1, y1, x2, y2 in rect:
-        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    rect = (rect[0][0], rect[0][1], rect[0][2], rect[0][3])
+    # for x1, y1, x2, y2 in rect:
+        # cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
     # output = EMSegmentation(cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5))
     # cv2.imwrite('out.png', output)
@@ -67,8 +68,8 @@ def _get_gc_mask(image):
 
 def _do_graphcut(image, rect):
     mask = np.zeros(image.shape[:2], np.uint8)
-    bgd_model = np.zeros((1,65), np.float64)
-    fgd_model = np.zeros((1,65), np.float64)
+    bgd_model = np.zeros((1, 65), np.float64)
+    fgd_model = np.zeros((1, 65), np.float64)
     cv2.grabCut(image, mask, rect, bgd_model, fgd_model, 5, cv2.GC_INIT_WITH_RECT)
 
     mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
